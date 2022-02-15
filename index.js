@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const talkerRouter = require('./routes/talker.router');
 const { loginRouter } = require('./routes/login.router');
 const { errorHanddlerMiddleware } = require('./errors/index.errors');
+const { tokenValidation } = require('./middlewares/talkerValidations.middleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,6 +17,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/login', loginRouter);
+app.use(tokenValidation);
 app.use('/talker', talkerRouter);
 app.use(errorHanddlerMiddleware);
 

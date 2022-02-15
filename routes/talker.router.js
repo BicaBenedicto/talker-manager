@@ -1,7 +1,8 @@
 const express = require('express');
 const fs = require('fs');
 const { personNotFound } = require('../errors/index.errors');
-const { talkerValidationPost } = require('../middlewares/talkerValidations.middleware');
+const { talkerValidationPost,
+  tokenValidation } = require('../middlewares/talkerValidations.middleware');
 
 const talkerRouter = express.Router();
 
@@ -18,6 +19,15 @@ talkerRouter.get('/:id', (req, res, next) => {
   if (findTalkerID) return res.status(200).json(findTalkerID);
   next();
 }, personNotFound);
+
+talkerRouter.delete('/:id', tokenValidation, (req, res, _next) => {
+  const { id } = req.params;
+  const talker = JSON.parse(fs.readFileSync('talker.json', 'utf8'))
+    .filter((talk) => talk.id !== Number(id));
+
+  fs.writeFileSync('talker.json', JSON.stringify(talker));
+  return res.sendStatus(204);
+});
 
 talkerRouter.post('/', talkerValidationPost, (req, res, _next) => {
   const newPerson = req.body;

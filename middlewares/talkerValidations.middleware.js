@@ -16,13 +16,13 @@ const ageValidation = (age, next) => {
   return false;
 };
 
-const tokenValidation = (authorization, next) => {
-  console.log('token');
-  console.log(authorization);
+const tokenValidation = (req, _res, next) => {
+  const { authorization } = req.headers;
+
   if (!authorization) return next('tokenNotFound');
   if (authorization.length !== 16) return next('tokenInvalid');
   if (!tokens.some((token) => token === authorization)) return next('tokenNotFound');
-  return false;
+  return next();
 };
 
 const dateValidation = (date) => {
@@ -56,12 +56,8 @@ const talkValidation = (talk, next) => {
 };
 
 const talkerValidationPost = (req, _res, next) => {
-  console.log('talkerValidation');
-  console.log(req.headers);
   const { name, age, talk } = req.body;
-  const { authorization } = req.headers;
 
-  tokenValidation(authorization, next);
   nameValidation(name, next);
   ageValidation(age, next);
   talkValidation(talk, next);
@@ -70,4 +66,5 @@ const talkerValidationPost = (req, _res, next) => {
 
 module.exports = {
   talkerValidationPost,
+  tokenValidation,
 };
