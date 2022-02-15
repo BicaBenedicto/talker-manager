@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const { personNotFound } = require('../errors/index.errors');
+const { talkerValidationPost } = require('../middlewares/talkerValidations.middleware');
 
 const talkerRouter = express.Router();
 
@@ -17,5 +18,12 @@ talkerRouter.get('/:id', (req, res, next) => {
   if (findTalkerID) return res.status(200).json(findTalkerID);
   next();
 }, personNotFound);
+
+talkerRouter.post('/', talkerValidationPost, (req, res, _next) => {
+  const newPerson = req.body;
+
+  fs.appendFileSync('./talker.json', JSON.stringify(newPerson));
+  return res.status(201).json(newPerson);
+});
 
 module.exports = talkerRouter;
