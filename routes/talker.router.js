@@ -21,9 +21,13 @@ talkerRouter.get('/:id', (req, res, next) => {
 
 talkerRouter.post('/', talkerValidationPost, (req, res, _next) => {
   const newPerson = req.body;
+  const talker = JSON.parse(fs.readFileSync('talker.json', 'utf8'));
+  const id = talker.sort((a, b) => b.id - a.id)[0].id + 1;
 
-  fs.appendFileSync('./talker.json', JSON.stringify(newPerson));
-  return res.status(201).json(newPerson);
+  talker.push({ id, ...newPerson });
+
+  fs.writeFileSync('./talker.json', JSON.stringify(talker));
+  return res.status(201).json({ id, ...newPerson });
 });
 
 module.exports = talkerRouter;

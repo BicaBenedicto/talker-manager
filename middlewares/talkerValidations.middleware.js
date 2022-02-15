@@ -1,3 +1,5 @@
+const { tokens } = require('../routes/login.router');
+
 const nameValidation = (name, next) => {
   const MIN_CHAR = 3;
 
@@ -16,6 +18,7 @@ const ageValidation = (age, next) => {
 
 const tokenValidation = (authorization, next) => {
   if (authorization.length !== 16) return next('tokenInvalid');
+  if (!tokens.some((token) => token === authorization)) return next('tokenNotFound');
   return false;
 };
 
@@ -36,6 +39,7 @@ const watchedAtValidation = (watchedAt, next) => {
 
 const rateValidation = (rate, next) => {
   if (typeof rate !== 'number' || rate <= 0 || rate > 5) return next('talkRateInvalid');
+  return false;
 };
 
 const talkValidation = (talk, next) => {
@@ -45,11 +49,15 @@ const talkValidation = (talk, next) => {
   if (!watchedAt || !rate) return next('talkEmpty');
   watchedAtValidation(watchedAt, next);
   rateValidation(rate, next);
+  return false;
 };
 
 const talkerValidationPost = (req, _res, next) => {
+  console.log('a');
   const { name, age, talk } = req.body;
   const { authorization } = req.headers;
+  console.log(authorization);
+  if (!authorization) return next('tokenNotFound');
 
   tokenValidation(authorization, next);
   nameValidation(name, next);

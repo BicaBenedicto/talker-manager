@@ -4,10 +4,14 @@ const { emailAndPasswordValidation } = require('../middlewares/loginValidations.
 
 const loginRouter = express.Router();
 
+const tokens = [];
+
 loginRouter.post('/', emailAndPasswordValidation, (req, res, _next) => {
   const token = crypto.randomBytes(8).toString('hex');
-
+  tokens.push(token);
   return res.status(200).json({ token });
 });
-
-module.exports = loginRouter;
+module.exports = {
+  loginRouter,
+  tokens,
+};

@@ -59,7 +59,8 @@ const ERRORS = {
 };
 
 const errorHanddlerMiddleware = (error, _req, res, _next) => {
-  console.log(error);
+  if (!ERRORS[error]) return res.send(error);
+
   const { status, message } = ERRORS[error];
   if (error === 'passwordEmpty') return res.status(status).json(message);
   return res.status(status).json({ message });
