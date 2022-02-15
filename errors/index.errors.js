@@ -44,9 +44,22 @@ const ERRORS = {
     status: 400,
     message: 'A pessoa palestrante deve ser maior de idade',
   },
+  talkEmpty: {
+    status: 400,
+    message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
+  },
+  talkDateInvalid: {
+    status: 400,
+    message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
+  },
+  talkRateInvalid: {
+    status: 400,
+    message: 'O campo "rate" deve ser um inteiro de 1 à 5',
+  },
 };
 
 const errorHanddlerMiddleware = (error, _req, res, _next) => {
+  console.log(error);
   const { status, message } = ERRORS[error];
   if (error === 'passwordEmpty') return res.status(status).json(message);
   return res.status(status).json({ message });
