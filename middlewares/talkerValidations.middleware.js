@@ -17,6 +17,9 @@ const ageValidation = (age, next) => {
 };
 
 const tokenValidation = (authorization, next) => {
+  console.log('token');
+  console.log(authorization);
+  if (!authorization) return next('tokenNotFound');
   if (authorization.length !== 16) return next('tokenInvalid');
   if (!tokens.some((token) => token === authorization)) return next('tokenNotFound');
   return false;
@@ -53,11 +56,10 @@ const talkValidation = (talk, next) => {
 };
 
 const talkerValidationPost = (req, _res, next) => {
-  console.log('a');
+  console.log('talkerValidation');
+  console.log(req.headers);
   const { name, age, talk } = req.body;
   const { authorization } = req.headers;
-  console.log(authorization);
-  if (!authorization) return next('tokenNotFound');
 
   tokenValidation(authorization, next);
   nameValidation(name, next);
