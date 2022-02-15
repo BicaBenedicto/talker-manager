@@ -36,6 +36,14 @@ const ERRORS = {
     status: 400,
     message: 'O "name" deve ter pelo menos 3 caracteres',
   },
+  ageEmpty: {
+    status: 400,
+    message: 'O campo "age" é obrigatório',
+  },
+  ageInvalid: {
+    status: 400,
+    message: 'A pessoa palestrante deve ser maior de idade',
+  },
 };
 
 const errorHanddlerMiddleware = (error, _req, res, _next) => {
