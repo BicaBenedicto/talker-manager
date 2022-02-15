@@ -1,11 +1,11 @@
 const express = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
-const { emailValidation } = require('../middlewares/loginValidations.middlewares');
+const { emailAndPasswordValidation } = require('../middlewares/loginValidations.middlewares');
 
 const loginRouter = express.Router();
 
-loginRouter.post('/', emailValidation, (req, res, _next) => {
+loginRouter.post('/', emailAndPasswordValidation, (req, res, _next) => {
   const token = crypto.randomBytes(8).toString('hex');
   const { email, password } = req.body;
 
