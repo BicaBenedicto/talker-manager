@@ -1,6 +1,5 @@
-const { tokens } = require('../routes/login.router');
-
-const nameValidation = (name, next) => {
+const nameValidation = (req, _res, next) => {
+  const { name } = req.body;
   const MIN_CHAR = 3;
 
   if (!name) return next('nameEmpty');
@@ -8,7 +7,8 @@ const nameValidation = (name, next) => {
   return false;
 };
 
-const ageValidation = (age, next) => {
+const ageValidation = (req, _res, next) => {
+  const { age } = req.body;
   const MIN_AGE = 18;
 
   if (!age) return next('ageEmpty');
@@ -18,10 +18,10 @@ const ageValidation = (age, next) => {
 
 const tokenValidation = (req, _res, next) => {
   const { authorization } = req.headers;
-
+  
   if (!authorization) return next('tokenNotFound');
   if (authorization.length !== 16) return next('tokenInvalid');
-  if (!tokens.some((token) => token === authorization)) return next('tokenNotFound');
+  if (req.useNext) return false;
   return next();
 };
 
@@ -45,7 +45,8 @@ const rateValidation = (rate, next) => {
   return false;
 };
 
-const talkValidation = (talk, next) => {
+const talkValidation = (req, _res, next) => {
+  const { talk } = req.body;
   if (!talk) return next('talkEmpty');
   const { watchedAt, rate } = talk;
 
@@ -55,12 +56,12 @@ const talkValidation = (talk, next) => {
   return false;
 };
 
-const talkerValidationPost = (req, _res, next) => {
-  const { name, age, talk } = req.body;
-
-  nameValidation(name, next);
-  ageValidation(age, next);
-  talkValidation(talk, next);
+const talkerValidationPost = (req, res, next) => {
+  req.useNext = true;
+  tokenValidation(req, res, next);
+  nameValidation(req, res, next);
+  ageValidation(req, res, next);
+  talkValidation(req, res, next);
   return next();
 };
 
