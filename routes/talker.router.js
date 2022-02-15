@@ -8,18 +8,25 @@ const talkerRouter = express.Router();
 const TALKER = 'talker.json';
 
 talkerRouter.get('/search', tokenValidation, (req, res, _next) => {
-  console.log(req.query);
   const { q } = req.query;
-  console.log(q);
   const talker = JSON.parse(fs.readFileSync(TALKER, 'utf8'));
   const findTalkerID = talker.filter((person) => person.name.includes(q));
 
   return res.status(200).json(findTalkerID);
 });
 
+talkerRouter.put('/:id', talkerValidationPost, (req, res, _next) => {
+  const { id } = req.params;
+  const person = req.body;
+  const talkers = JSON.parse(fs.readFileSync('./talker.json', 'utf8'))
+    .map((talk) => (talk.id === Number(id) ? { id: Number(id), ...person } : talk));
+
+  fs.writeFileSync(TALKER, JSON.stringify(talkers));
+  return res.status(200).json({ id: Number(id), ...person });
+});
+
 talkerRouter.get('/:id', (req, res, next) => {
   const { id } = req.params;
-  console.log(req.query);
   const talker = JSON.parse(fs.readFileSync('./talker.json', 'utf8'));
   const findTalkerID = talker.find((person) => person.id === Number(id));
 

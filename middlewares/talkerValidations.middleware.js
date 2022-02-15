@@ -41,7 +41,7 @@ const watchedAtValidation = (watchedAt, next) => {
 };
 
 const rateValidation = (rate, next) => {
-  if (typeof rate !== 'number' || rate <= 0 || rate > 5) return next('talkRateInvalid');
+  if (typeof rate !== 'number' || rate < 1 || rate > 5) return next('talkRateInvalid');
   return false;
 };
 
@@ -49,10 +49,10 @@ const talkValidation = (req, _res, next) => {
   const { talk } = req.body;
   if (!talk) return next('talkEmpty');
   const { watchedAt, rate } = talk;
+  if (!watchedAt || typeof rate !== 'number') return next('talkEmpty');
 
-  if (!watchedAt || !rate) return next('talkEmpty');
-  watchedAtValidation(watchedAt, next);
   rateValidation(rate, next);
+  watchedAtValidation(watchedAt, next);
   return false;
 };
 
